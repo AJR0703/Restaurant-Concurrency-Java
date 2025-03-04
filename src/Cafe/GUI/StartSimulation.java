@@ -1,7 +1,6 @@
 package Cafe.GUI;
 
 import Cafe.Cafe;
-import SettingsData.Data;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,13 +37,16 @@ public class StartSimulation {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
+        frame.getContentPane().setBackground(new Color(80, 52, 31));
+
         JPanel leftPanel = new JPanel();
         JPanel rightPanel = createLogPanel();
 
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         startMenuComponents = startMenu.createMenuPanel(this);
         addItems(startMenuComponents, leftPanel);
-        formatComponents(startMenuComponents, subtitleFont);
+        formatLabels(startMenuComponents, subtitleFont);
+        leftPanel.setBackground(new Color(198, 156, 109));
 
         // SplitPane to divide menu and log window
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
@@ -65,6 +67,8 @@ public class StartSimulation {
         logArea = new JTextArea();
         logArea.setEditable(false);
         logArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        logArea.setBackground(new Color(198, 156, 109));
+        logArea.setForeground(Color.BLACK);
 
         JScrollPane scrollPane = new JScrollPane(logArea);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -84,11 +88,22 @@ public class StartSimulation {
      * @param components A list of JComponents that require formatting
      * @param style the style of font, including size and type to set to the Components.
      */
-    private void formatComponents(List<JComponent> components, Font style) {
+    private void formatLabels(List<JComponent> components, Font style) {
         components.get(0).setAlignmentX(Component.CENTER_ALIGNMENT);
         components.get(0).setFont(titleFont);
+        components.get(0).setForeground(Color.BLACK);
         int i = 1;
         while (i < components.size()) {
+            if (components.get(i) instanceof JButton) {
+                components.get(i).setBackground(new Color(139, 69, 19));
+                components.get(i).setForeground(new Color(255, 248, 220));
+            } else if (components.get(i) instanceof JLabel) {
+                components.get(i).setForeground(Color.BLACK);
+            }
+            else if (components.get(i) instanceof JSlider){
+                components.get(i).setBackground(new Color(198, 156, 109));
+                components.get(i).setForeground(Color.BLACK);
+            }
             components.get(i).setAlignmentX(Component.CENTER_ALIGNMENT);
             components.get(i).setFont(style);
             i++;
@@ -117,10 +132,9 @@ public class StartSimulation {
 
         runtimeMenuComponents= runtimeMenu.createRuntimeMenu();
         addItems(runtimeMenuComponents, blankPanel);
-        formatComponents(runtimeMenuComponents, subtitleFont);
+        formatLabels(runtimeMenuComponents, subtitleFont);
 
-        blankPanel.setBackground(Color.WHITE); // Optional: Set background color
-
+        blankPanel.setBackground(new Color(198, 156, 109));
         splitPane.setLeftComponent(blankPanel);
 
         splitPane.setDividerLocation(300); // Set initial size for menu panel
