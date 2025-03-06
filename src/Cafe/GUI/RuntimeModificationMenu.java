@@ -3,10 +3,12 @@ package Cafe.GUI;
 import SettingsData.Data;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static Cafe.GUI.StartSimulation.CAFE;
+import static Cafe.GUI.Simulation.CAFE;
 
 /**
  * Creates a Runtime Menu, used modifying/ adding objects during runtime.
@@ -14,42 +16,74 @@ import static Cafe.GUI.StartSimulation.CAFE;
 public class RuntimeModificationMenu {
 
     private List<JComponent> runtimeMenuComponents = new ArrayList<>();
+    private Font subtitleFont = new Font("Arial", Font.BOLD, 20);
 
     /**
-     * Adds Components to the List of JComponents
-     * Functionality such as adding customers and modifying execution time.
-     * @return A list of JComponents.
+     * Returns a list for all items that should be added to the runtime menu for the simulation.
      */
     public List<JComponent> createRuntimeMenu() {
 
         JLabel menuTitle = new JLabel("Runtime Settings");
 
-        JLabel customersLabel = new JLabel("Add new Customers:");
-        JSlider customersSlider = new JSlider(1, 30, 5);
-        JLabel numOfCustomersLabel = new JLabel(String.valueOf(customersSlider.getValue()));
-        customersSlider.addChangeListener(e -> numOfCustomersLabel.setText(String.valueOf(customersSlider.getValue())));
-
+        JPanel customerPanel = createLabeledSlider("Number Of Customers to add:", 5, 50, 5);
         JButton submitButton = new JButton("Add Customers");
         submitButton.addActionListener(e -> {
-            Data.setCustomerCount(customersSlider.getValue());
+            Data.setCustomerCount(retrieveJSlider(customerPanel).getValue());
 
             CAFE.addNewCustomers();
         });
 
-        JLabel executionTimeLabel = new JLabel("Modify Execution Time (Fast to Slow):");
-        JSlider executionTimeSlider = new JSlider(1, 5000, Data.getWaitingTime());
-        executionTimeSlider.addChangeListener(e -> Data.setWaitingTime(executionTimeSlider.getValue()));
+        JPanel executionSpeedPanel = createLabeledSlider("Modify Delay (Milliseconds):", 1, 5000, Data.getWaitingTime());
+        retrieveJSlider(executionSpeedPanel).addChangeListener(e -> Data.setWaitingTime(retrieveJSlider(executionSpeedPanel).getValue()));
 
-        runtimeMenuComponents.add(menuTitle);
-        runtimeMenuComponents.add(customersLabel);
-        runtimeMenuComponents.add(customersSlider);
-        runtimeMenuComponents.add(numOfCustomersLabel);
-        runtimeMenuComponents.add(submitButton);
-        runtimeMenuComponents.add(executionTimeLabel);
-        runtimeMenuComponents.add(executionTimeSlider);
+        return Arrays.asList(menuTitle, customerPanel,submitButton, executionSpeedPanel);
+    }
 
+    /**
+     * Helper method to create a JPanel with a label, slider, and value display.
+     */
+    private JPanel createLabeledSlider(String text, int min, int max, int defaultValue) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(198, 156, 109));
 
-        return runtimeMenuComponents;
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.BOLD, 14));
+        JSlider slider = new JSlider(min, max, defaultValue);
+        JLabel valueLabel = new JLabel(String.valueOf(slider.getValue()));
+
+        label.setFont(subtitleFont);
+        valueLabel.setFont(subtitleFont);
+
+        slider.addChangeListener(e -> valueLabel.setText(String.valueOf(slider.getValue())));
+
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        labelPanel.setBackground(new Color(198, 156, 109));
+        slider.setBackground(new Color(198, 156, 109));
+        labelPanel.add(label);
+        labelPanel.add(valueLabel);
+
+        panel.add(labelPanel);
+        panel.add(slider);
+
+        panel.add(Box.createVerticalStrut(10));
+
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, panel.getPreferredSize().height));
+
+        return panel;
+    }
+
+    /**
+     * Retrieves the Slider from each JPanel
+     */
+    private JSlider retrieveJSlider(JPanel panel) {
+        Component[] components = panel.getComponents();
+        for (Component component : components) {
+            if (component instanceof JSlider) {
+                return (JSlider) component;
+            }
+        }
+        return null;
     }
 
 }

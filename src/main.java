@@ -1,14 +1,11 @@
-import Cafe.Cafe;
-import Cafe.GUI.StartSimulation;
+import Cafe.GUI.Simulation;
 
 import javax.swing.*;
 
 public class main {
 
-    private static final int numOfCustomers = 7;
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(StartSimulation::new);
+        SwingUtilities.invokeLater(Simulation::new);
     }
 
 }

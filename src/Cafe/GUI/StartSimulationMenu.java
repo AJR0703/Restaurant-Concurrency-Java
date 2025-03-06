@@ -3,114 +3,101 @@ package Cafe.GUI;
 import SettingsData.Data;
 
 import javax.swing.*;
-import java.util.ArrayList;
+import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 
-import static Cafe.GUI.StartSimulation.CAFE;
+import static Cafe.GUI.Simulation.CAFE;
 
 /**
- * Creates a list for all items that should be added to the start menu for the simulation.
+ * Returns a list for all items that should be added to the start menu for the simulation.
  */
 public class StartSimulationMenu {
 
-    private List<JComponent> cafeComponents = new ArrayList<>();
+    private Font subtitleFont = new Font("Arial", Font.BOLD, 20);
 
     /**
      * Adds and returns a List of JComponents that should be added to the startMenu.
      * @param menu the class in which the Menu is created.
      * @return a list of JComponents
      */
-    public List<JComponent> createMenuPanel(StartSimulation menu) {
-        JPanel menuPanel = new JPanel();
-        menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
-
+    public List<JComponent> createMenuPanel(Simulation menu) {
         JLabel menuTitle = new JLabel("Cafe Settings");
+        menuTitle.setAlignmentX(Component.CENTER_ALIGNMENT); // Center title
 
-        JLabel customersLabel = new JLabel("Number of Customers:");
-        JSlider customersSlider = new JSlider(1, 50, 5);
-        JLabel numOfCustomersLabel = new JLabel(String.valueOf(customersSlider.getValue()));
-        customersSlider.addChangeListener(e -> numOfCustomersLabel.setText(String.valueOf(customersSlider.getValue())));
+        JPanel customerPanel = createLabeledSlider("Number of Customers:", 5, 50, 5);
+        JPanel coffeePanel = createLabeledSlider("Number of Coffees:", 1, 300, 5);
+        JPanel cakePanel = createLabeledSlider("Number of Cakes:", 1, 300, 5);
+        JPanel teaPanel = createLabeledSlider("Number of Teas:", 1, 300, 5);
+        JPanel numOfCoffeeStaffPanel = createLabeledSlider("Number of Coffee Staff:", 1, 10, 5);
+        JPanel numOfTeaStaffPanel = createLabeledSlider("Number of Tea Staff:", 1, 10, 5);
+        JPanel numOfCakeStaffPanel = createLabeledSlider("Number of Cake Staff:", 1, 10, 5);
 
-        JLabel coffeeLabel = new JLabel("Number of Coffees");
-        JSlider coffeeStockSlider = new JSlider(5, 30, 5);
-        JLabel numOfCoffeesLabel = new JLabel(String.valueOf(coffeeStockSlider.getValue()));
-        coffeeStockSlider.addChangeListener(e -> numOfCoffeesLabel.setText(String.valueOf(coffeeStockSlider.getValue())));
-
-        JLabel cakeLabel = new JLabel("Number of Cakes");
-        JSlider cakeStockSlider = new JSlider(5, 30, 5);
-        JLabel numOfCakesLabel = new JLabel(String.valueOf(cakeStockSlider.getValue()));
-        cakeStockSlider.addChangeListener(e -> numOfCakesLabel.setText(String.valueOf(cakeStockSlider.getValue())));
-
-        JLabel teaLabel = new JLabel("Number of Teas:");
-        JSlider teaStockSlider = new JSlider(5, 30, 5);
-        JLabel numOfTeasLabel = new JLabel(String.valueOf(teaStockSlider.getValue()));
-        teaStockSlider.addChangeListener(e -> numOfTeasLabel.setText(String.valueOf(teaStockSlider.getValue())));
-
-        JLabel coffeeStaffLabel = new JLabel("Number of Staff assigned at Coffee Station:");
-        JSlider coffeeStaffSlider = new JSlider(1, 5, 1);
-        JLabel numOfCoffeeStaffLabel = new JLabel(String.valueOf(coffeeStaffSlider.getValue()));
-        coffeeStaffSlider.addChangeListener(e -> numOfCoffeeStaffLabel.setText(String.valueOf(coffeeStaffSlider.getValue())));
-
-        JLabel teaStaffLabel = new JLabel("Number of Staff assigned at Tea Station:");
-        JSlider teaStaffSlider = new JSlider(1, 5, 1);
-        JLabel numOfTeaStaffLabel = new JLabel(String.valueOf(teaStaffSlider.getValue()));
-        teaStaffSlider.addChangeListener(e -> numOfTeaStaffLabel.setText(String.valueOf(teaStaffSlider.getValue())));
-
-        JLabel cakeStaffLabel = new JLabel("Number of Staff assigned at Cake Station:");
-        JSlider cakeStaffSlider = new JSlider(1, 5, 1);
-        JLabel numOfCakeStaffLabel = new JLabel(String.valueOf(cakeStaffSlider.getValue()));
-        cakeStaffSlider.addChangeListener(e -> numOfCakeStaffLabel.setText(String.valueOf(cakeStaffSlider.getValue())));
+        customerPanel.setBackground(new Color(198, 156, 109));
 
         JButton submitButton = new JButton("Start Simulation");
-
-        cafeComponents.add(menuTitle);
-
-        cafeComponents.add(customersLabel);
-        cafeComponents.add(customersSlider);
-        cafeComponents.add(numOfCustomersLabel);
-
-        cafeComponents.add(coffeeLabel);
-        cafeComponents.add(coffeeStockSlider);
-        cafeComponents.add(numOfCoffeesLabel);
-
-        cafeComponents.add(cakeLabel);
-        cafeComponents.add(cakeStockSlider);
-        cafeComponents.add(numOfCakesLabel);
-
-        cafeComponents.add(teaLabel);
-        cafeComponents.add(teaStockSlider);
-        cafeComponents.add(numOfTeasLabel);
-
-        cafeComponents.add(coffeeStaffLabel);
-        cafeComponents.add(coffeeStaffSlider);
-        cafeComponents.add(numOfCoffeeStaffLabel);
-
-        cafeComponents.add(teaStaffLabel);
-        cafeComponents.add(teaStaffSlider);
-        cafeComponents.add(numOfTeaStaffLabel);
-
-        cafeComponents.add(cakeStaffLabel);
-        cafeComponents.add(cakeStaffSlider);
-        cafeComponents.add(numOfCakeStaffLabel);
-
-        cafeComponents.add(submitButton);
+        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         submitButton.addActionListener(e -> {
-            Data.setCustomerCount(customersSlider.getValue());
-            Data.setInitialCoffeeStock(coffeeStockSlider.getValue());
-            Data.setInitialCakeStock(cakeStockSlider.getValue());
-            Data.setInitialTeaStock(teaStockSlider.getValue());
-            Data.addStaff("coffee", coffeeStaffSlider.getValue());
-            Data.addStaff("tea", teaStaffSlider.getValue());
-            Data.addStaff("cake", cakeStaffSlider.getValue());
+                Data.setCustomerCount(retrieveJSlider(customerPanel).getValue());
+                Data.setInitialCoffeeStock(retrieveJSlider(coffeePanel).getValue());
+                Data.setInitialCakeStock(retrieveJSlider(cakePanel).getValue());
+                Data.setInitialTeaStock(retrieveJSlider(teaPanel).getValue());
+                Data.addStaff("coffee",retrieveJSlider(numOfCoffeeStaffPanel).getValue());
+                Data.addStaff("tea", retrieveJSlider(numOfTeaStaffPanel).getValue());
+                Data.addStaff("cake", retrieveJSlider(numOfCakeStaffPanel).getValue());
 
-            submitButton.setEnabled(false);
-
-            Data.outputStartingValue();
-            CAFE.open();
-            menu.addRuntimeMenuPanel();
+                menu.addRuntimeMenuPanel();
+                CAFE.open();
         });
 
-        return cafeComponents;
+        return Arrays.asList(menuTitle, customerPanel, coffeePanel, cakePanel, teaPanel, numOfCoffeeStaffPanel,
+                numOfTeaStaffPanel, numOfCakeStaffPanel,submitButton);
     }
+
+    /**
+     * Helper method to create a JPanel with a label, slider, and value display.
+     */
+    private JPanel createLabeledSlider(String text, int min, int max, int defaultValue) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBackground(new Color(198, 156, 109));
+
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Arial", Font.BOLD, 14));
+        JSlider slider = new JSlider(min, max, defaultValue);
+        JLabel valueLabel = new JLabel(String.valueOf(slider.getValue()));
+
+        label.setFont(subtitleFont);
+        valueLabel.setFont(subtitleFont);
+
+        slider.addChangeListener(e -> valueLabel.setText(String.valueOf(slider.getValue())));
+
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        labelPanel.setBackground(new Color(198, 156, 109));
+        slider.setBackground(new Color(198, 156, 109));
+        labelPanel.add(label);
+        labelPanel.add(valueLabel);
+
+        panel.add(labelPanel);
+        panel.add(slider);
+
+        panel.add(Box.createVerticalStrut(10));
+
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, panel.getPreferredSize().height));
+
+        return panel;
+    }
+
+    private JSlider retrieveJSlider(JPanel panel) {
+        Component[] components = panel.getComponents();
+        for (Component component : components) {
+            if (component instanceof JSlider) {
+                return (JSlider) component;
+            }
+        }
+        return null;
+    }
+
+
 }

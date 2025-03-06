@@ -3,6 +3,7 @@ package Cafe.GUI;
 import Cafe.Cafe;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -11,13 +12,13 @@ import java.util.List;
 /**
  * This class is responsible for Creating the GUI and displaying once the code in being run.
  */
-public class StartSimulation {
+public class Simulation {
 
     private JSplitPane splitPane;
     private List<JComponent> startMenuComponents = new ArrayList<>();
     private List<JComponent> runtimeMenuComponents = new ArrayList<>();
-    private Font titleFont = new Font("Arial", Font.BOLD, 24);
-    private Font subtitleFont = new Font("Arial", Font.BOLD, 14);
+    private Font titleFont = new Font("Arial", Font.BOLD, 36);
+    private Font subtitleFont = new Font("Arial", Font.BOLD, 20);
     public static Cafe CAFE = new Cafe();
 
     private StartSimulationMenu startMenu = new StartSimulationMenu();
@@ -30,8 +31,7 @@ public class StartSimulation {
      * Creates and displays the starting menu with the log panel.
      * Sets a split ratio between the menu and the log panel.
      */
-    public StartSimulation() {
-        // Create the main frame
+    public Simulation() {
         JFrame frame = new JFrame("Cafe Management System");
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,13 +45,12 @@ public class StartSimulation {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         startMenuComponents = startMenu.createMenuPanel(this);
         addItems(startMenuComponents, leftPanel);
-        formatLabels(startMenuComponents, subtitleFont);
+        formatComponents(startMenuComponents, subtitleFont);
         leftPanel.setBackground(new Color(198, 156, 109));
 
-        // SplitPane to divide menu and log window
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
-        splitPane.setDividerLocation(300); // Set initial size for menu panel
-        splitPane.setResizeWeight(0.3); // Left panel takes 30% space
+        splitPane.setDividerLocation(300);
+        splitPane.setResizeWeight(0.3);
 
         frame.add(splitPane);
         frame.setVisible(true);
@@ -69,13 +68,13 @@ public class StartSimulation {
         logArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         logArea.setBackground(new Color(198, 156, 109));
         logArea.setForeground(Color.BLACK);
+        logArea.setFont(new Font("Arial", Font.BOLD, 12));
 
         JScrollPane scrollPane = new JScrollPane(logArea);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
         logPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Redirect System.out to log window
         PrintStream printStream = new PrintStream(new Logs(logArea));
         System.setOut(printStream);
         System.setErr(printStream);
@@ -88,10 +87,12 @@ public class StartSimulation {
      * @param components A list of JComponents that require formatting
      * @param style the style of font, including size and type to set to the Components.
      */
-    private void formatLabels(List<JComponent> components, Font style) {
+    private void formatComponents(List<JComponent> components, Font style) {
         components.get(0).setAlignmentX(Component.CENTER_ALIGNMENT);
         components.get(0).setFont(titleFont);
         components.get(0).setForeground(Color.BLACK);
+        Border border = BorderFactory.createLineBorder(new Color(139, 69, 19), 3);
+        components.get(0).setBorder(border);
         int i = 1;
         while (i < components.size()) {
             if (components.get(i) instanceof JButton) {
@@ -103,9 +104,13 @@ public class StartSimulation {
             else if (components.get(i) instanceof JSlider){
                 components.get(i).setBackground(new Color(198, 156, 109));
                 components.get(i).setForeground(Color.BLACK);
+            } else if (components.get(i) instanceof JPanel){
+                ((JPanel)components.get(i)).setBackground(new Color(198, 156, 109));
+                components.get(i).setForeground(Color.BLACK);
             }
             components.get(i).setAlignmentX(Component.CENTER_ALIGNMENT);
             components.get(i).setFont(style);
+            components.get(i).setBorder(border);
             i++;
         }
     }
@@ -127,20 +132,19 @@ public class StartSimulation {
      * Adds the runtime Components from the list of JComponents to the JPanel to be displayed.
      */
     public void addRuntimeMenuPanel() {
-        JPanel blankPanel = new JPanel(); // Create a new blank panel
+        JPanel blankPanel = new JPanel();
         blankPanel.setLayout(new BoxLayout(blankPanel, BoxLayout.Y_AXIS));
 
         runtimeMenuComponents= runtimeMenu.createRuntimeMenu();
         addItems(runtimeMenuComponents, blankPanel);
-        formatLabels(runtimeMenuComponents, subtitleFont);
+        formatComponents(runtimeMenuComponents, subtitleFont);
 
         blankPanel.setBackground(new Color(198, 156, 109));
         splitPane.setLeftComponent(blankPanel);
 
-        splitPane.setDividerLocation(300); // Set initial size for menu panel
-        splitPane.setResizeWeight(0.3); // Left panel takes 30% space
+        splitPane.setDividerLocation(400);
+        splitPane.setResizeWeight(0.3);
 
-        // Refresh UI
         splitPane.revalidate();
         splitPane.repaint();
     }

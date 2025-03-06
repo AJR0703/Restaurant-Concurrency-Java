@@ -3,7 +3,7 @@ package Cafe.Customer.Actions;
 import Cafe.Buffet.Order;
 import SettingsData.Data;
 
-import java.util.Random;
+import java.util.*;
 
 /**
  * Implements the CustomerAction interface.
@@ -14,7 +14,7 @@ public class PlaceOrder implements CustomerAction {
     private int wantedCoffees;
     private int wantedTeas;
     private int wantedCakes;
-    private Random random = new Random();
+    private  Random random = new Random();
 
     /**
      * Overrides the CustomerAction method.
@@ -64,22 +64,29 @@ public class PlaceOrder implements CustomerAction {
     }
 
     /**
-     * Checks to see if at least one of the requested items are above zero.
-     * @return boolean to determine if this above is true.
-     */
-    private boolean checkOrder() {
-        return (wantedCakes >0 || wantedCoffees >0 || wantedTeas >0);
-    }
-
-    /**
-     * Generates a random quantity of food, ranging up to 2.
-     * If the checkOrder method returns false, the stock will be regenerated.
+     * A random number of stock items will be generated the condition returns true.
      */
     private void generateQuantity() {
-        while (!checkOrder()) {
+        do {
             this.wantedCakes = random.nextInt(2);
             this.wantedTeas = random.nextInt(2);
             this.wantedCoffees = random.nextInt(2);
-        }
+        } while (!checkOrder());
     }
+
+    /**
+     * Generates an order of the following:
+     * Only Coffee,
+     * Only Tea,
+     * Only Cake,
+     * Cake and Tea,
+     * Cake and Coffee,
+     * @return boolean true if the order meets the requirements.
+     */
+    private boolean checkOrder() {
+        int itemCount = wantedCakes + wantedTeas + wantedCoffees;
+
+        return itemCount == 1 || (itemCount == 2 && !(wantedTeas == 1 && wantedCoffees == 1));
+    }
+
 }
